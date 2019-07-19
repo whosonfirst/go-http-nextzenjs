@@ -51,6 +51,8 @@ type NextzenJSWriter struct {
 	options *NextzenJSOptions
 }
 
+// please update this to use: https://github.com/aaronland/go-http-rewrite/blob/master/html.go
+
 func (h NextzenJSWriter) ServeHTTP(rsp http.ResponseWriter, req *http.Request) {
 
 	rec := httptest.NewRecorder()
