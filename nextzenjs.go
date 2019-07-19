@@ -3,7 +3,6 @@ package nextzenjs
 import (
 	"bufio"
 	"bytes"
-	"github.com/whosonfirst/go-http-nextzenjs/assets"
 	"golang.org/x/net/html"
 	"golang.org/x/net/html/atom"
 	"io"
@@ -164,6 +163,6 @@ func (h NextzenJSWriter) ServeHTTP(rsp http.ResponseWriter, req *http.Request) {
 
 func NextzenJSAssetsHandler() (http.Handler, error) {
 
-	fs := assets.assetFS()
+	fs := assetFS()
 	return http.FileServer(fs), nil
 }

@@ -1,20 +1,22 @@
-build:
-	@make maps
-	@make assets
+CWD=$(shell pwd)
+
+go-bindata:
+	mkdir -p cmd/go-bindata
+	mkdir -p cmd/go-bindata-assetfs
+	curl -s -o cmd/go-bindata/main.go https://raw.githubusercontent.com/whosonfirst/go-bindata/master/cmd/go-bindata/main.go
+	curl -s -o cmd/go-bindata-assetfs/main.go https://raw.githubusercontent.com/whosonfirst/go-bindata-assetfs/master/cmd/go-bindata-assetfs/main.go
+
+assets:	
+	go build -o bin/go-bindata cmd/go-bindata/main.go
+	go build -o bin/go-bindata-assetfs cmd/go-bindata-assetfs/main.go
+	rm -f static/*~ static/css/*~ static/javascript/*~ static/tangram/*~
+	@PATH=$(PATH):$(CWD)/bin bin/go-bindata-assetfs -pkg nextzenjs -o assets.go -prefix static static/javascript static/css static/tangram
 
 maps:
 	@make wwwdirs
 	@make nextzenjs
 	@make tangram
 	@make styles
-
-assets:	self
-	if test ! -d bin; then mkdir bin; fi
-	@GOPATH=$(GOPATH) go build -o bin/go-bindata ./vendor/github.com/zendesk/go-bindata/go-bindata/
-	@GOPATH=$(GOPATH) go build -o bin/go-bindata-assetfs vendor/github.com/elazarl/go-bindata-assetfs/go-bindata-assetfs/main.go
-	rm -f static/*~ static/css/*~ static/javascript/*~ static/tangram/*~
-	@PATH=$(PATH):$(CWD)/bin bin/go-bindata-assetfs -pkg mapzenjs www static/javascript static/css static/tangram
-	mv bindata.go assets.go
 
 wwwdirs:
 	if test ! -d static/javascript; then mkdir static/javascript; fi
