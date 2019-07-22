@@ -140,6 +140,15 @@ func main(){
 
 You can update the various `nextzen.js` and `tangram.js` assets manually by invoking the `build` target in the included [Makefile](Makefile).
 
+#### Styles
+
+Currently the following styles are bundled with this package:
+
+* [refill](https://tangrams.github.io/refill-style/)
+* [walkabout](https://tangrams.github.io/walkabout-style/)
+
+## Example
+
 For a complete example, have a look at [cmd/map/main.go](cmd/map/main.go) which run like this:
 
 ```
@@ -149,13 +158,6 @@ go run cmd/map/main.go -api-key {NEXTZEN_API_KEY}
 Produces this:
 
 ![](docs/images/20190722-nextzenjs.png)
-
-#### Styles
-
-Currently the following styles are bundled with this package:
-
-* [refill](https://tangrams.github.io/refill-style/)
-* [walkabout](https://tangrams.github.io/walkabout-style/)
 
 ## To do
 
