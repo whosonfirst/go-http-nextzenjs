@@ -2,10 +2,6 @@
 
 Go middleware package for nextzen.js
  
-## Important
-
-This is work in progress and you should not expect it to work yet.
-
 ## Install
 
 You will need to have both `Go` (version [1.12](https://golang.org/dl/) or higher) and the `make` programs installed on your computer. Assuming you do just type:
@@ -143,6 +139,16 @@ func main(){
 ```
 
 You can update the various `nextzen.js` and `tangram.js` assets manually by invoking the `build` target in the included [Makefile](Makefile).
+
+For a complete example, have a look at [cmd/map/main.go](cmd/map/main.go) which run like this:
+
+```
+go run cmd/map/main.go -api-key {NEXTZEN_API_KEY}
+```
+
+Produces this:
+
+![](docs/images/20190722-nextzenjs.png)
 
 #### Styles
 

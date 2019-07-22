@@ -10,7 +10,7 @@ assets:
 	go build -o bin/go-bindata cmd/go-bindata/main.go
 	go build -o bin/go-bindata-assetfs cmd/go-bindata-assetfs/main.go
 	rm -f static/*~ static/css/*~ static/javascript/*~ static/tangram/*~
-	@PATH=$(PATH):$(CWD)/bin bin/go-bindata-assetfs -pkg nextzenjs -o assets.go -prefix static static/javascript static/css static/tangram
+	@PATH=$(PATH):$(CWD)/bin bin/go-bindata-assetfs -pkg nextzenjs -o assets.go static static/javascript static/css static/tangram
 
 maps:
 	@make wwwdirs

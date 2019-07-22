@@ -1,8 +1,8 @@
 package main
 
 import (
-       "flag"
-       "fmt"
+	"flag"
+	"fmt"
 	"github.com/whosonfirst/go-http-nextzenjs"
 	"log"
 	"net/http"
@@ -10,7 +10,7 @@ import (
 
 func MapHandler() http.Handler {
 
-index := `
+	index := `
 <!doctype html>
 <html lang="en-us">
   <head>
@@ -69,9 +69,9 @@ index := `
 
 	fn := func(rsp http.ResponseWriter, req *http.Request) {
 
-	   rsp.Write([]byte(index))		       
+		rsp.Write([]byte(index))
 	}
-	
+
 	return http.HandlerFunc(fn)
 }
 
@@ -98,11 +98,18 @@ func main() {
 
 	mux.Handle("/", nextzenjs_handler)
 
-	err = nextzenjs.AppendAssetHandlers(mux)
+	assets_handler, err := nextzenjs.NextzenJSAssetsHandler()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	mux.Handle("/javascript/nextzen.js", assets_handler)
+	mux.Handle("/javascript/nextzen.min.js", assets_handler)
+	mux.Handle("/javascript/tangram.js", assets_handler)
+	mux.Handle("/javascript/tangram.min.js", assets_handler)
+	mux.Handle("/css/nextzen.js.css", assets_handler)
+	mux.Handle("/tangram/refill-style.zip", assets_handler)
 
 	endpoint := fmt.Sprintf("%s:%d", *host, *port)
 	log.Printf("Listening for requests on %s\n", endpoint)
