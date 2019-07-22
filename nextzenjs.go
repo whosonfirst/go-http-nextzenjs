@@ -105,3 +105,21 @@ func NextzenJSAssetsHandler() (http.Handler, error) {
 	fs := assetFS()
 	return http.FileServer(fs), nil
 }
+
+func AppendAssetHandlers(mux *http.ServeMux) error {
+
+	assets_handler, err := NextzenJSAssetsHandler()
+
+	if err != nil {
+		return err
+	}
+
+	mux.Handle("/javascript/nextzen.js", assets_handler)
+	mux.Handle("/javascript/nextzen.min.js", assets_handler)
+	mux.Handle("/javascript/tangram.js", assets_handler)
+	mux.Handle("/javascript/tangram.min.js", assets_handler)
+	mux.Handle("/css/nextzen.js.css", assets_handler)
+	mux.Handle("/tangram/refill-style.zip", assets_handler)
+
+	return nil
+}
