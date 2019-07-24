@@ -98,18 +98,11 @@ func main() {
 
 	mux.Handle("/", nextzenjs_handler)
 
-	assets_handler, err := nextzenjs.NextzenJSAssetsHandler()
+	err = nextzenjs.AppendAssetHandlers(mux)
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	mux.Handle("/javascript/nextzen.js", assets_handler)
-	mux.Handle("/javascript/nextzen.min.js", assets_handler)
-	mux.Handle("/javascript/tangram.js", assets_handler)
-	mux.Handle("/javascript/tangram.min.js", assets_handler)
-	mux.Handle("/css/nextzen.js.css", assets_handler)
-	mux.Handle("/tangram/refill-style.zip", assets_handler)
 
 	endpoint := fmt.Sprintf("%s:%d", *host, *port)
 	log.Printf("Listening for requests on %s\n", endpoint)

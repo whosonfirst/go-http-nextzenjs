@@ -7,6 +7,7 @@ import (
 	"io"
 	_ "log"
 	"net/http"
+	"strings"
 )
 
 type NextzenJSOptions struct {
@@ -104,4 +105,20 @@ func NextzenJSAssetsHandler() (http.Handler, error) {
 
 	fs := assetFS()
 	return http.FileServer(fs), nil
+}
+
+func AppendAssetHandlers(mux *http.ServeMux) error {
+
+	asset_handler, err := NextzenJSAssetsHandler()
+
+	if err != nil {
+		return nil
+	}
+
+	for _, path := range AssetNames() {
+		path := strings.Replace(path, "static", "", 1)
+		mux.Handle(path, asset_handler)
+	}
+
+	return nil
 }
