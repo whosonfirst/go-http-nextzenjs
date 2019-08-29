@@ -139,12 +139,12 @@ func NextzenJSAssetsHandlerWithPrefix(prefix string) (http.Handler, error) {
 	}
 
 	prefix = strings.TrimRight(prefix, "/")
-	
+
 	if prefix == "" {
 		return fs_handler, nil
 	}
 
-	rewrite_func := func(req *http.Request) (*http.Request, error){
+	rewrite_func := func(req *http.Request) (*http.Request, error) {
 		req.URL.Path = strings.Replace(req.URL.Path, prefix, "", 1)
 		return req, nil
 	}

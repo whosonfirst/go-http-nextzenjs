@@ -6,6 +6,11 @@ go-bindata:
 	curl -s -o cmd/go-bindata/main.go https://raw.githubusercontent.com/whosonfirst/go-bindata/master/cmd/go-bindata/main.go
 	curl -s -o cmd/go-bindata-assetfs/main.go https://raw.githubusercontent.com/whosonfirst/go-bindata-assetfs/master/cmd/go-bindata-assetfs/main.go
 
+bake-templates:
+	go build -o bin/go-bindata cmd/go-bindata/main.go
+	rm -rf templates/html/*~
+	bin/go-bindata -pkg templates -o assets/templates/html.go templates/html
+
 assets:	
 	go build -o bin/go-bindata cmd/go-bindata/main.go
 	go build -o bin/go-bindata-assetfs cmd/go-bindata-assetfs/main.go

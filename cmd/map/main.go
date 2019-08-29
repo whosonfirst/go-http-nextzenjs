@@ -1,78 +1,36 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"github.com/whosonfirst/go-http-nextzenjs"
+	"github.com/whosonfirst/go-http-nextzenjs/assets/templates"
+	"html/template"
 	"log"
 	"net/http"
 )
 
-func MapHandler() http.Handler {
+func MapHandler(templates *template.Template) (http.Handler, error) {
 
-	index := `
-<!doctype html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Map</title>
-    <style>
-        body {
-            margin: 0px;
-            border: 0px;
-            padding: 0px;
-        }
+	t := templates.Lookup("map")
 
-        #map {
-            height: 100%;
-            width: 100%;
-            position: absolute;
-        }
-
-    </style>
-  </head>
-
-  <body>
-    <div id="map"></div>
-
-    <script>
-
-    	var api_key = document.body.getAttribute("data-nextzen-api-key");
-
-        var map = L.Nextzen.map('map', {apiKey: api_key,attribution: '<a href="https://github.com/tangrams" target="_blank">Tangram</a> | <a href="http://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a> | <a href="https://www.nextzen.org/" target="_blank">Nextzen</a>',
-            tangramOptions: {
-                scene: {
-                    import: [
-                        '/tangram/refill-style.zip',
-                    ],
-                    sources: {
-                        mapzen: {
-                            url: 'https://{s}.tile.nextzen.org/tilezen/vector/v1/512/all/{z}/{x}/{y}.mvt',
-                            url_subdomains: ['a', 'b', 'c', 'd'],
-                            url_params: {api_key: api_key},
-                            tile_size: 512,
-                            max_zoom: 16
-                        }
-                    }
-                }
-            }
-        });
-        map.setView([33.0, -12.3], 2);
-        L.Nextzen.hash({map: map});
-
-    </script>
-
-  </body>
-</html>`
+	if t == nil {
+		return nil, errors.New("Missing 'map' template")
+	}
 
 	fn := func(rsp http.ResponseWriter, req *http.Request) {
 
-		rsp.Write([]byte(index))
+		err := t.Execute(rsp, nil)
+
+		if err != nil {
+			http.Error(rsp, err.Error(), http.StatusInternalServerError)
+		}
+
+		return
 	}
 
-	return http.HandlerFunc(fn)
+	return http.HandlerFunc(fn), nil
 }
 
 func main() {
@@ -81,14 +39,50 @@ func main() {
 	host := flag.String("host", "localhost", "...")
 	port := flag.Int("port", 8080, "...")
 
+	path_templates := flag.String("templates", "", "An optional string for local templates. This is anything that can be read by the 'templates.ParseGlob' method.")
+
 	flag.Parse()
+
+	t := template.New("example")
+
+	var err error
+
+	if *path_templates != "" {
+
+		t, err = t.ParseGlob(*path_templates)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	} else {
+
+		for _, name := range templates.AssetNames() {
+
+			body, err := templates.Asset(name)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			t, err = t.Parse(string(body))
+
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
+	}
 
 	opts := nextzenjs.DefaultNextzenJSOptions()
 	opts.APIKey = *api_key
 
 	mux := http.NewServeMux()
 
-	map_handler := MapHandler()
+	map_handler, err := MapHandler(t)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	nextzenjs_handler, err := nextzenjs.NextzenJSHandler(map_handler, opts)
 
